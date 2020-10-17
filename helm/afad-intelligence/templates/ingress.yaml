@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: afad-intelligence
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: afad-intelligence
+  annotations:
+    kubernetes.io/ingress.class: ambassador
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /intelligence/
+            backend:
+              serviceName: afad-intelligence
+              servicePort: 8080

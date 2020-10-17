@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: afad-tiles
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: afad-tiles
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: afad-tiles
+    spec:
+      volumes:
+        - name: afad-tiles-data
+          # This volume is based on PVC
+          persistentVolumeClaim:
+            # Name of the PVC created earlier
+            claimName: afad-tiles-pvc
+      containers:
+        - name: afad-tiles
+          image: "{{ .Values.deploy.image.repository }}:{{ .Values.deploy.image.tag }}"
+          imagePullPolicy: {{ .Values.deploy.image.pullPolicy }}
+          volumeMounts:
+            - name: afad-tiles-data
+              mountPath: "/data"
+          ports:
+            - containerPort: 80

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: afad-fe
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: afad-fe
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: afad-fe
+    spec:
+      containers:
+        - name: afad-fe
+          env:
+            - name: API_GATEWAY_URL
+              value: {{ .Values.deploy.api_gateway }}
+            - name: SECURITY_API_URL
+              value: http://afad-security.{{ .Release.Namespace }}:8080
+            - name: SYSTEM_API_URL
+              value: http://afad-system.{{ .Release.Namespace }}:8080
+            - name: CATEGORIES_API_URL
+              value: http://afad-category.{{ .Release.Namespace }}:8080
+            - name: INTELLIGENCE_API_URL
+              value: http://afad-intelligence.{{ .Release.Namespace }}:8080
+            - name: ORGANIZATION_API_URL
+              value: http://afad-organization.{{ .Release.Namespace }}:8080
+            - name: EW_API_URL
+              value: http://afad-ew.{{ .Release.Namespace }}:8080
+            - name: SR_API_URL
+              value: http://afad-sr.{{ .Release.Namespace }}:8080
+            - name: AG_API_URL
+              value: http://afad-ag.{{ .Release.Namespace }}:8080
+            - name: STORAGE_API_URL
+              value: http://afad-storage.{{ .Release.Namespace }}:8080
+            - name: STATISTIC_API_URL
+              value: http://afad-statistic.{{ .Release.Namespace }}:8080
+            - name: ZIPKIN_API_URL
+              value: http://afad-zipkin.{{ .Release.Namespace }}:9411
+            - name: SOCKET_HOSTNAME
+              value: ws://afad-socketio.{{ .Release.Namespace }}:8080
+            - name: TILE_SERVER
+              value: http://afad-tiles.{{ .Release.Namespace }}
+            - name: TDTT_API
+              value: http://10.100.131.26:31001
+            - name: TBNV_API
+              value: http://afad-vht-tbnv-api.afad:3501
+            - name: DEM_SERVER
+              value: http://118.70.142.181:3301
+          image: registry.c4i.vn/afad/afad-fe:0.0.4.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80

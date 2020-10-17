@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: afad-ew
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: afad-ew
+  annotations:
+    kubernetes.io/ingress.class: ambassador
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /ew/
+            backend:
+              serviceName: afad-ew
+              servicePort: 8080

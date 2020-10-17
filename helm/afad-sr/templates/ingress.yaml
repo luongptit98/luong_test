@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: afad-sr
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: afad-sr
+  annotations:
+    kubernetes.io/ingress.class: ambassador
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /sr/
+            backend:
+              serviceName: afad-sr
+              servicePort: 8080

@@ -1,0 +1,15 @@
+deploy:
+  image:
+    repository: 10.100.131.29/afad/afad-tiles
+    pullPolicy: Always
+    tag: latest
+
+service:
+  type: ClusterIP
+  # port:
+  #   rest: 8080
+  #   grpc: 6565
+
+nfs:
+  path: /root/nfs_storage/afad-tiles/
+  server: 10.100.131.12

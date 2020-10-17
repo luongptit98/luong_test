@@ -1,0 +1,18 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: afad-intelligence
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    app: afad-intelligence
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+    - name: grpc
+      protocol: TCP
+      port: 6565
+      targetPort: 6565
+  type: {{ .Values.service.type }}

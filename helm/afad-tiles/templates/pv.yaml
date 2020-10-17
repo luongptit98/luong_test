@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: afad-tiles-pv
+  labels:
+    type: afad-tiles
+spec:
+  storageClassName: afad-tiles
+  capacity:
+    storage: 50Gi
+  accessModes:
+    - ReadWriteOnce
+#   hostPath:
+#     path: "/mnt/storage/fPK365/tiles"
+  nfs:
+    path: {{ .Values.nfs.path }}
+    server: {{ .Values.nfs.server }}

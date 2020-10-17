@@ -1,0 +1,11 @@
+deploy:
+  image:
+    repository: 10.100.131.29/afad/afad-socketio
+    pullPolicy: Always
+    tag: latest
+
+service:
+  type: ClusterIP
+  # port:
+  #   rest: 8080
+  #   grpc: 6565

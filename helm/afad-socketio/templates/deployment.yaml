@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: afad-socketio
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: afad-socketio
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: afad-socketio
+    spec:
+      containers:
+        - name: afad-socketio
+          env:
+            - name: SOCKER_PORT
+              value: '8080'
+            - name: TRACK_QUEUE
+              value: '0'
+            - name: QUEUE_TIME_PLOT
+              value: '1000'
+            - name: EVENT_TRACK
+              value: 'UPDATE|DELETE|NEW|UPDATE_ALL|UPDATE_BTIC'
+          image: "{{ .Values.deploy.image.repository }}:{{ .Values.deploy.image.tag }}"
+          imagePullPolicy: {{ .Values.deploy.image.pullPolicy }}
+          ports:
+            - containerPort: 8080

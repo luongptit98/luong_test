@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: afad-intelligence
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: afad-intelligence
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: afad-intelligence
+    spec:
+      containers:
+        - name: afad-intelligence
+          image: "{{ .Values.deploy.image.repository }}:{{ .Values.deploy.image.tag }}"
+          imagePullPolicy: {{ .Values.deploy.image.pullPolicy }}
+          ports:
+            - containerPort: 8080

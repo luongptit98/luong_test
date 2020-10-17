@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: afad-organization
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: afad-organization
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: afad-organization
+    spec:
+      containers:
+        - name: afad-organization
+          image: "{{ .Values.deploy.image.repository }}:{{ .Values.deploy.image.tag }}"
+          imagePullPolicy: {{ .Values.deploy.image.pullPolicy }}
+          ports:
+            - containerPort: 8080

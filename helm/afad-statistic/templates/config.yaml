@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: afad-statistic
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yml: |
+    # AFAD
+    unit.code: {{ .Values.config.unit_code }}
+    # Spark
+    spark:
+      app.name: AFAD-Statistic
+      master: 'local[*]'
+      cassandra:
+        host: {{ .Values.config.cassandra.contact_points }}
+        auth:
+          username: {{ .Values.config.cassandra.username }}
+          password: {{ .Values.config.cassandra.password }}
+        track:
+          keyspace: {{ .Values.config.cassandra.local.keyspace_name }}
+          table: track_log
+    # Spring
+    spring:
+      jackson:
+        date-format: "dd/MM/yyyy HH:mm:ss"
+      messages:
+        basename: messages
+        encoding: UTF-8
+      sleuth:
+        sampler:
+          probability: 1
+      zipkin:
+        base-url: http://afad-zipkin.{{ .Release.Namespace }}:9411
+    # JWT
+    jwt.secret: FFyeEskjbB
+    # Services
+    rest:
+      connectTimeout: 30s
+      readTimeout: 30s
+      services:
+        security: http://afad-security.{{ .Release.Namespace }}:8080

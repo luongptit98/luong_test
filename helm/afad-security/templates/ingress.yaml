@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: afad-security
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: afad-security
+  annotations:
+    kubernetes.io/ingress.class: ambassador
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /security/
+            backend:
+              serviceName: afad-security
+              servicePort: 8080

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: afad-statistic
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: afad-statistic
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: afad-statistic
+    spec:
+      containers:
+        - name: afad-statistic
+          image: "{{ .Values.deploy.image.repository }}:{{ .Values.deploy.image.tag }}"
+          imagePullPolicy: {{ .Values.deploy.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+      imagePullSecrets:
+        - name: afad-docker-registry

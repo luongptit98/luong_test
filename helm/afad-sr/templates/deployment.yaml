@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: afad-sr
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: afad-sr
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: afad-sr
+    spec:
+      containers:
+        - name: afad-sr
+          image: "{{ .Values.deploy.image.repository }}:{{ .Values.deploy.image.tag }}"
+          imagePullPolicy: {{ .Values.deploy.image.pullPolicy }}
+          ports:
+            - containerPort: 8080

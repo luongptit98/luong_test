@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: afad-training
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: afad-training
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: afad-training
+    spec:
+      containers:
+        - name: afad-training
+          image: "{{ .Values.deploy.image.repository }}:{{ .Values.deploy.image.tag }}"
+          imagePullPolicy: {{ .Values.deploy.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+      imagePullSecrets:
+        - name: vq2-docker-registry

@@ -1,0 +1,24 @@
+apiVersion: getambassador.io/v2
+kind:  Mapping
+metadata:
+  name:  afad-fe
+  namespace: {{ .Release.Namespace }}
+spec:
+  prefix: /
+  service: afad-fe.afad:3000
+  timeout_ms: 60000
+  idle_timeout_ms: 500000
+  connect_timeout_ms: 60000
+  cors:
+    credentials: true
+    exposed_headers: X-Total-Count
+    headers: '*'
+    methods: 'POST, GET, OPTIONS, HEAD, PUT, DELETE, PATCH'
+    origins: '*'
+  circuit_breakers:
+    - max_connections: 4096
+      max_pending_requests: 4096
+      max_requests: 4096
+  use_websocket: true
+  envoy_override:
+    per_connection_buffer_limit_bytes: 10485760

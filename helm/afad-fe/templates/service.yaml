@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: afad-fe
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    app: afad-fe
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3000
+      targetPort: 80
+  type: {{ .Values.service.type }}

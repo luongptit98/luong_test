@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: afad-3d
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: afad-3d
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: afad-3d
+    spec:
+      volumes:
+        - name: afad-3d-data
+          persistentVolumeClaim:
+            # Name of the PVC created earlier
+           claimName: afad-3d-pvc        
+      containers:
+        - name: afad-3d
+          envFrom:
+            - configMapRef:
+                name: afad-3d
+          image: "{{ .Values.deploy.image.repository }}:{{ .Values.deploy.image.tag }}"
+          imagePullPolicy: {{ .Values.deploy.image.pullPolicy }}
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+            - name: afad-3d-data
+              mountPath: "/data"
+      # imagePullSecrets:
+      #   - name: afad-docker-registry

@@ -1,0 +1,34 @@
+deploy:
+  image:
+    repository: 10.100.131.29/afad-training/afad-training
+    pullPolicy: Always
+    tag: latest
+
+service:
+  type: ClusterIP
+  # port:
+  #   rest: 8080
+  #   grpc: 6565
+
+config:
+  unit_code: fpk361
+  cassandra:
+    contact-points: 10.100.131.160,10.100.131.161,10.100.131.162
+    info:
+      keyspace_name: afad_training_info
+    local:
+      datacenter: DC_PKKQ
+      keyspace_name: afad_training_fpk361
+    username: teca_admin
+    password: Teca@123
+  rabbitmq:
+    host: rabbitmq-training-rabbitmq-client.rabbitmq-training
+    port: 5672
+    username: admin
+    password: admin
+  es_hosts: 10.100.131.160:9200,10.100.131.161:9200,10.100.131.162:9200
+  grpc:
+    intelligence:
+      port: 6565
+    organization:
+      port: 6565

@@ -1,0 +1,104 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: afad-training
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yml: |
+    # AFAD
+    unit.code: {{ .Values.config.unit_code }}
+    scheduling:
+      lock.default-lock-at-most-for: "PT5M"
+      jobs:
+    rabbitmq:
+      producer:
+        system:
+          exchange: system-event
+          routingKey: system.event
+        site:
+          exchange: site-event
+          routingKey: site.event
+      consumer:
+        system:
+          routingKey: system.event.#
+          queue: system.event.afad-training
+        site:
+          routingKey: site.event.#
+          queue: site.event.afad-training
+    # Spring
+    spring:
+      data:
+        cassandra:
+          info:
+          info:
+            keyspace-name: {{ .Values.config.cassandra.info.keyspace_name }}
+            port: 9042
+            contact-points: {{ .Values.config.cassandra.contact_points }}
+            username: {{ .Values.config.cassandra.username }}
+            password: {{ .Values.config.cassandra.password }}
+            consistency-level: local_quorum
+            serial-consistency-level: local_serial
+          local:
+            keyspace-name: {{ .Values.config.cassandra.local.keyspace_name }}
+            port: 9042
+            contact-points: {{ .Values.config.cassandra.contact_points }}
+            username: {{ .Values.config.cassandra.username }}
+            password: {{ .Values.config.cassandra.password }}
+            consistency-level: local_quorum
+            serial-consistency-level: local_serial
+            local-datacenter: {{ .Values.config.cassandra.local.datacenter }}
+      messages:
+        basename: messages
+        encoding: UTF-8
+      sleuth:
+        sampler:
+          probability: 1
+      zipkin:
+        base-url: http://afad-zipkin.{{ .Release.Namespace }}:9411
+      rabbitmq:
+        host: {{ .Values.config.rabbitmq.host }}
+        port: {{ .Values.config.rabbitmq.port }}
+        username: {{ .Values.config.rabbitmq.username }}
+        password: {{ .Values.config.rabbitmq.password }}
+        listener:
+          simple:
+            concurrency: 10
+            max-concurrency: 20
+      task:
+        scheduling:
+          pool:
+            size: 2
+          shutdown:
+            await-termination: true
+      jackson:
+        time-zone: Asia/Ho_Chi_Minh
+        date-format: dd/MM/yyyy HH:mm:ss
+    # ES
+    es.hosts: {{ .Values.config.es_hosts }}
+    # JWT
+    jwt.secret: FFyeEskjbB
+    # SocketIO
+    socketio:
+      uri: http://afad-socketio.{{ .Release.Namespace }}:8080
+    # gRPC
+    grpc:
+      port: 6565
+      shutdownGrace: 30
+      channel:
+        organization:
+          name: afad-organization.{{ .Release.Namespace }}
+          port: 6565
+        intelligence:
+          name: afad-organization.{{ .Release.Namespace }}
+          port: 6565
+    # Logging
+    logging:
+      level:
+        org.springframework.data.cassandra.core.cql: info
+    # Services
+    rest:
+      connectTimeout: 30s
+      readTimeout: 30s
+      services:
+        security: http://afad-security.{{ .Release.Namespace }}:8080
+        intelligence: http://afad-intelligence.{{ .Release.Namespace }}:8080

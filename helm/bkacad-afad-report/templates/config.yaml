@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: afad-ag
+  namespace: {{ .Release.Namespace }}
+data:
+  application.yml: |
+    unit.code: {{ .Values.config.unit_code }}
+    rabbitmq:
+      producer:
+        system:
+          exchange: system-event
+          routingKey: system.event
+        site:
+          exchange: site-event
+          routingKey: site.event
+      consumer:
+        system:
+          routingKey: system.event.#
+          queue: system.event.afad-ag
+        site:
+          routingKey: site.event.#
+          queue: site.event.afad-ag
+    # Spring
+    spring:
+      data:
+        cassandra:
+          info:
+            keyspace-name: {{ .Values.config.cassandra.info.keyspace_name }}
+            port: 9042
+            contact-points: {{ .Values.config.cassandra.contact_points }}
+            username: {{ .Values.config.cassandra.username }}
+            password: {{ .Values.config.cassandra.password }}
+            consistency-level: local_quorum
+            serial-consistency-level: local_serial
+          local:
+            keyspace-name: {{ .Values.config.cassandra.local.keyspace_name }}
+            port: 9042
+            contact-points: {{ .Values.config.cassandra.contact_points }}
+            username: {{ .Values.config.cassandra.username }}
+            password: {{ .Values.config.cassandra.password }}
+            consistency-level: local_quorum
+            serial-consistency-level: local_serial
+      messages:
+        basename: messages
+        encoding: UTF-8
+      sleuth:
+        sampler:
+          probability: 1
+      zipkin:
+        base-url: http://afad-zipkin.{{ .Release.Namespace }}:9411
+      # AMQP
+      rabbitmq:
+        host: {{ .Values.config.rabbitmq.host }}
+        port: {{ .Values.config.rabbitmq.port }}
+        username: {{ .Values.config.rabbitmq.username }}
+        password: {{ .Values.config.rabbitmq.password }}
+      jackson:
+        time-zone: Asia/Ho_Chi_Minh
+        date-format: dd/MM/yyyy HH:mm:ss
+    # ES
+    es.hosts: {{ .Values.config.es_hosts }}
+    # JWT
+    jwt.secret: FFyeEskjbB
+    # SocketIO
+    socketio:
+      uri: http://afad-socketio.{{ .Release.Namespace }}:8080
+    # gRPC
+    grpc:
+      port: 6565
+      shutdownGrace: 30
+      channel:
+        security:
+          name: afad-security.{{ .Release.Namespace }}
+          port: {{ .Values.config.grpc.security.port }}
+        system:
+          name: afad-system.{{ .Release.Namespace }}
+          port: {{ .Values.config.grpc.system.port }}
+        organization:
+          name: afad-organization.{{ .Release.Namespace }}
+          port: {{ .Values.config.grpc.organization.port }}
+        intelligence:
+          name: afad-intelligence.{{ .Release.Namespace }}
+          port: {{ .Values.config.grpc.intelligence.port }}
+        category:
+          name: afad-category.{{ .Release.Namespace }}
+          port: {{ .Values.config.grpc.category.port }}
+        vht:
+          name: flightroutebuilder.{{ .Release.Namespace }}
+          port: {{ .Values.config.grpc.vht.port }}
+        intercept:
+          name: intercept.{{ .Release.Namespace }}
+          port: {{ .Values.config.grpc.intercept.port }}
+        su:
+          name: fuelconsumption.{{ .Release.Namespace }}
+          port: {{ .Values.config.grpc.su.port }}
+    # Logging
+    logging:
+      level:
+        org.springframework.data.cassandra.core.cql: info
+    # Services
+    rest:
+      connectTimeout: 30s
+      readTimeout: 30s
+      services:
+        security: http://afad-security.{{ .Release.Namespace }}:8080
